@@ -1,14 +1,33 @@
 <script setup>
 import { useHead } from '#imports'
-import { ref } from 'vue'
+import Header from '~/components/Header.vue'
+import Footer from '~/components/Footer.vue'
+
+const lang = 'ru'
+
+const translations = {
+    page_title: {
+        en: 'Welcome to Offer',
+        ru: 'Добро пожаловать на Offer',
+    },
+}
 
 useHead({
-    title: 'Welcome to Offer',
+    title: translations.page_title[lang],
 })
-const counter = ref(0)
 </script>
 
 <template>
-    <p>Button was clicked {{ counter }} times.</p>
-    <button v-on:click="++counter">Click me!</button>
+    <Header :lang="lang" :active_nav_section="null" />
+    <div id="content-container">
+        <p>Lorem Ipsum</p>
+    </div>
+    <Footer />
 </template>
+
+<style>
+#content-container {
+    background-color: #141414;
+    height: 100vh
+}
+</style>
