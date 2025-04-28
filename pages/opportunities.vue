@@ -25,7 +25,7 @@ useHead({
             <OpportunityCard
                 :api_host="'localhost:8001'"
                 :lang="lang"
-                :opportunity_id="'123'"/>
+                :opportunity_id="'680f44b163b59224c86dacf8'"/>
         </ClientOnly>
     </div>
     <Footer :lang="lang" />
