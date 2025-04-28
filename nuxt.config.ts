@@ -7,8 +7,8 @@ export default defineNuxtConfig({
     autoImport: false,
   },
   pages: true,
-  ssr: true,
-  routeRules: {
-    '/': { prerender: true },
-  },
+  ssr: false,
+  // routeRules: {
+  //   '/': { prerender: true },
+  // },
 })
