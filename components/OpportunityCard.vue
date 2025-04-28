@@ -34,13 +34,13 @@ const api_key = useCookie<string | undefined>(
     'api_key', { default: () => undefined }
 )
 
-if (!api_key.value) {
-    throw createError({
-        statusCode: 403,
-        statusMessage: 'Authentication required',
-        fatal: true,
-    });
-}
+// if (!api_key.value) {
+//     throw createError({
+//         statusCode: 403,
+//         statusMessage: 'Authentication required',
+//         fatal: true,
+//     });
+// }
 
 const { data: opportunity, status: load_status } = await useLazyFetch<Opportunity>(
     `${props.lang}/opportunity`,

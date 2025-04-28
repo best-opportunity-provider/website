@@ -6,7 +6,7 @@ const props = defineProps<{
 
 <template>
     <footer>
-        <p>This is a footer</p>
+        <p>©2025 Best Opportunity Provider. All Rights Reserved</p>
     </footer>
 </template>
 
@@ -18,9 +18,11 @@ footer {
     border-color: #555555;
     border-style: solid;
     border-width: 1px 0 0 0;
-    font-size: 24px;
+    font-size: 12px;
     display: flex;
-    justify-content: center;
+    
+    justify-content: left;
+    padding-left: 50px;
     align-items: center;
     color: #777777;
 }

@@ -1,101 +1,182 @@
-#content-container {
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Inter;
+}
+body {
+    background-color: #141414;
+    color: white;
+}
+
+#background-img {
+    position: absolute;
+    height: 80%;
+    top: 20%;
+}
+
+#title {
+    font-size: 45px;
+    display: flex;
+    width: 100%;
+}
+
+#title-logo-block {
+    display: flex;
+    margin-left: 40px;
+    align-items: end;
+    margin-bottom: 15px;
+}
+
+#title-logo-block img {
+    width: 40px;
+    height: 40px;
+}
+
+#title-logo-block h2 {
+    font-size: 30px;
+    margin-left: 10px;
+}
+
+#title h1 {
+    padding-left: 30px;
+    padding-top: 20px;
+}
+
+#container-body {
+    margin-top: 60px;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
-    grid-template-rows: 1fr auto 1fr;
-    gap: 0;
-    height: 100vh;
 }
 
-#form-container {
+#auth-form {
     grid-column: 2 / 3;
+    width: 350px;
+    display: grid;
+    grid-template-rows: 10px auto 70px auto 30px auto 60px auto 10px;
+}
+
+#auth-form-pages {
+    display: flex;
     grid-row: 2 / 3;
+    justify-content: center;
+    gap: 80px;
+}
+
+#auth-form-labels {
+    grid-row: 4 / 5;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    gap: 20px;
+}
+
+#additional {
+    grid-row: 6 / 7;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+}
+
+#additional a {
+    color: #A061B3;
+    font-size: 12px;
+}
+
+#additional-remember {
+    display: flex;
+    flex-direction: row-reverse;
     gap: 10px;
-    width: 250px;
+    font-size: 12px;
+    grid-column: 1 / 2;
 }
 
-#form-content-container {
+#additional-label {
+    grid-column: 3 / 4;
+}
+
+#auth-form-sign {
+    grid-row: 8 / 9;
+}
+
+#auth-form-sign button {
+    background-color: #A061B3;
+    width: 100%;
+    height: 40px;
+    border-radius: 10px;
+    border: 0;
+    color: white;
+    font-weight: 600;
+}
+
+#sign-in-button {
+    border: 0;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    width: 100%;
-    height: 100%;
-    padding: 15px 0 15px 0;
-    background-color: #f6f8fa;
-    border: 1.5px solid #dddfe1;
+    gap: 8px;
+}
+
+#sign-in-button img {
+    width: 18px;
+    height: 18px;
+}
+
+#login-page {
+    grid-column: 2 / 3;
+}
+
+#register-page {
+    grid-column: 4 / 5;
+}
+
+#email-label, #password-label {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#email-label-content, #password-label-content {
+    border: 1px solid #454545;
     border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 8px;
 }
 
-.form-field-container {
-    width: 80%;
+#email-label-content img, #password-label-content img {
+    width: 15px;    
+    height: 15px;
 }
 
-.form-field-label {
-    font-weight: 500;
-    color: #373737;
-}
 
-.form-field-input {
-    display: block;
-    width: 100%;
-    height: 30px;
-    margin-top: 5px;
-    padding: 2px 7px 2px 7px;
-    border-radius: 5px;
-    border: 1.5px solid #dddfe1;
-    transition: border-color .3s;
-    font-size: 12px;
-}
-
-.form-field-input:focus {
-    outline: none;
-    border-color: #0c7abf;
-    transition: border-color .3s ease-in;
-}
-
-/* idk why, but this selector is needed in firefox */
-.form-field-container .form-field-input[type=password]:placeholder-shown {
-    font-size: 12px;
-}
-
-.form-field-input[type=password]:not(:placeholder-shown) {
-    font-size: 10px;
-}
-
-#form-submit-button {
-    width: 50%;
-    height: 30px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1.5px transparent;
-    background-color: #178317;
-    transition: all .3s;
+#password-label input, #email-label input {
+    background-color: transparent;
+    border: 0;
     color: white;
-    font-weight: bold;
-    cursor: pointer;
 }
 
-#form-submit-button:hover,
-#form-submit-button:focus {
-    background-color: #147214;
-    transition: background-color .3s;
+#password-label-content input:focus, #email-label-content input:focus {
     outline: none;
 }
 
-.form-tip-container {
-    font-size: 15px;
-}
 
-.form-tip-container a {
-    color: dodgerblue;
+.sign-button {
+    background-color: transparent;
+    color: white;
+    border: 0;
+    font-size: 20px;
     text-decoration: none;
 }
 
-.form-tip-container a:hover {
-    text-decoration: underline;
+.selected-page {
+    text-decoration: underline solid #E10E54;
+    text-underline-offset: 20px;
+    text-decoration-thickness: 3px;
+}
+
+.sign-button:hover:not(.selected-page) {
+    color: #A061B3;
 }
