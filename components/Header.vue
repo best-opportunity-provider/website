@@ -26,7 +26,7 @@ const menuObject = reactive({
 
 
 function DisplayMenuBar() {
-    menuObject.display = menuObject.display == 'block' ? 'none' : 'block'
+    menuObject.display = menuObject.display == 'inline' ? 'none' : 'inline'
 }
 
 </script>
@@ -52,12 +52,19 @@ function DisplayMenuBar() {
         <div :style="menuObject" id="header-drop-menu">
             <div class="header-drop-menu-item">
                 <img src="~/public/settings.png">Управление аккаунтом</div>
-            <div class="header-drop-menu-item">
-                <img src="~/public/settings.png">Управление аккаунтом</div>
+            <div class="Divider"></div>
+
             <div class="header-drop-menu-item">
                 <img src="~/public/settings.png">Управление аккаунтом</div>
             <div class="Divider"></div>
-            <div id="logout-button">Выйти</div>
+
+            <div class="header-drop-menu-item">
+                <img src="~/public/settings.png">Управление аккаунтом</div>
+            <div class="Divider"></div>
+
+            <div id="logout-block">
+                <div id="logout-button">Выйти</div>
+            </div>
         </div>
     </header>
 </template>
@@ -206,11 +213,18 @@ header {
 }
 
 #logout-button {
-    margin-top: 20px;
     background-color: rgb(160, 59, 59);
     border-radius: 10px;
     padding: 10px 25px 10px 25px;
     font-size: 15px;
+    width: 100px;
+}
+
+#logout-block {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    color: white;
 }
 
 #logout-button:hover {
@@ -219,8 +233,8 @@ header {
 }
 
 .Divider {
-    background: red;
-    height: 1px;
-    margin: 0 16px;
+    background: #555555;
+    height: .1px;
+    margin: 5px 16px;
 }
 </style>
