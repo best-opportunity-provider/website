@@ -22,7 +22,7 @@ useHead({
     <div id="content-container">
         <p>Lorem Ipsum</p>
     </div>
-    <Footer />
+    <Footer :lang="lang"/>
 </template>
 
 <style>
