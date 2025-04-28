@@ -12,11 +12,11 @@ type NamedObject = {
     name: string,
 };
 
-type Category = 'internship' | 'job';
+type Category = 0 | 1;
 
 type Opportunity = {
     id: string,
-    title: string,
+    name: string,
     description: string,
     provider: NamedObject & {
         logo: string,  // URL
@@ -28,6 +28,15 @@ type Opportunity = {
 
 function capitalize(s: string): string {
     return s[0].toUpperCase() + s.slice(1);
+}
+
+function categoryName(category: Category): string {
+    switch (category) {
+        case 0:
+            return 'Internship'
+        case 1:
+            return 'Job'
+    }
 }
 
 const api_key = useCookie<string | undefined>(
@@ -53,26 +62,6 @@ const { data: opportunity, status: load_status } = await useLazyFetch<Opportunit
         },
     }
 );
-
-// const opportunity: Opportunity = {
-//     id: '67f39fbb08c63243c50dd6fc',
-//     title: 'Intern in the team of industrial design of Smart devices with Alice',
-//     description: 'We are looking for talented interns who want to develop their skills in industrial design, work with real devices and participate in creating the future.',
-//     provider: {
-//         id: '67f39fbb08c63243c50dd6fc',
-//         name: 'Yandex',
-//         logo: '/yandex.png',
-//     },
-//     category: 'internship',
-//     tags: [
-//         { id: 'format_hybrid', name: 'Hybrid' },
-//         { id: 'branch_industrial_design', name: 'Industrial design' },
-//         { id: 'branch_user_interface', name: 'User interface' },
-//     ],
-//     places: [
-//         { id: '67f39fbb08c63243c50dd6fc', name: 'Yandex office in Moscow' },
-//     ],
-// };
 
 const translations = {
     visit_page_button: {
@@ -120,15 +109,16 @@ const translations = {
         </div>
         <template v-else>
             <div id="opportunity-title-container">
-                <p>{{ opportunity.title }}</p>
+                <p>{{ opportunity.name }}</p>
                 <div>
                     <a id="provider-container" :href="`/opportunities?provider=${opportunity.provider.id}`">
-                        <img :src="opportunity.provider.logo">
+                        <img
+                            :src="`http://${props.api_host}/${props.lang}/file?id=${opportunity.provider.logo}&api_key=${api_key}`">
                         <p>{{ opportunity.provider.name }}</p>
                     </a>
                     <p>/</p>
                     <a id="opportunity-category" :href="`/opportunities?category=${opportunity.category}`">
-                        {{ capitalize(opportunity.category) }}
+                        {{ categoryName(opportunity.category) }}
                     </a>
                 </div>
             </div>
