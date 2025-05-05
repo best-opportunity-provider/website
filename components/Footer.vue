@@ -26,4 +26,9 @@ footer {
     align-items: center;
     color: #777777;
 }
+#content-container {
+    background-color: #141414;
+    height: 100vh
+}
+
 </style>

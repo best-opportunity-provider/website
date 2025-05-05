@@ -51,9 +51,9 @@ body {
 
 #auth-form {
     grid-column: 2 / 3;
-    width: 350px;
+    width: 300px;
     display: grid;
-    grid-template-rows: 10px auto 70px auto 30px auto 60px auto 10px;
+    grid-template-rows: 10px auto 50px auto 20px auto 40px auto 10px;
 }
 
 #auth-form-pages {
@@ -90,7 +90,13 @@ body {
 }
 
 #additional-label {
-    grid-column: 3 / 4;
+    grid-column: 3 / 4  ;
+    cursor: pointer;
+}
+
+#additional-label-already-auth {
+    grid-column: 1 / 2;
+    cursor: pointer;
 }
 
 #auth-form-sign {
@@ -116,7 +122,15 @@ body {
     justify-content: center;
     align-items: center;
     gap: 8px;
+    cursor: pointer;
+    transition: ease-in-out .2s background-color;
 }
+
+#sign-in-button:hover{
+    background-color: #694275;
+    transition: ease-in-out .2s background-color;
+}
+
 
 #sign-in-button img {
     width: 18px;

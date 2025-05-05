@@ -8,7 +8,72 @@ useHead({
 </script>
 
 <template>
-    <div id="content-container">
+     <div>
+        <div id="title">
+            <h1>Welcome Back</h1>
+            <div id="title-logo-block">
+                <img src="~/public/logo.png">
+                <h2>Offer</h2>
+            </div>
+        </div>
+        <div id="container-body">
+            <div id="auth-form"> <!--flex-->
+                <div id="auth-form-pages">
+                    <a id="login-page" class="sign-button" href="/sign-in">Login</a>
+                    <a id="register-page" class="selected-page sign-button">Register</a>
+                </div>
+                <div id="auth-form-labels"> <!--grid-->
+                    <div id="email-label">
+                        <label for="email">Username</label>
+                        <div id="email-label-content">
+                            <img src="~/public/mail.png">
+                            <input v-model="username_input" @input="handle_username_input"
+                                :disabled="request_status === 'pending'" type="text" name="email"
+                                placeholder="Username" />
+                        </div>
+                        <p v-if="username_input_status === 'error'">{{ translations.username_error[lang] }}</p>
+                    </div>
+                    <div id="email-label">
+                        <label for="email">Email</label>
+                        <div id="email-label-content">
+                            <img src="~/public/mail.png">
+                            <input v-model="username_input" @input="handle_username_input"
+                                :disabled="request_status === 'pending'" type="text" name="email"
+                                placeholder="Email" />
+                        </div>
+                        <p v-if="username_input_status === 'error'">{{ translations.username_error[lang] }}</p>
+                    </div>
+                    <div id="password-label">
+                        <label for="password">Password</label>
+                        <div id="password-label-content">
+                            <img src="~/public/password.png">
+                            <input v-model="password_input" @input="handle_password_input"
+                                :disabled="request_status === 'pending'" type="password" name="password"
+                                placeholder="Password" />
+                        </div>
+                        <p v-if="password_input_status === 'error'">{{ translations.password_error[lang] }}</p>
+                    </div>
+                </div>
+                <div id="additional">
+                        <NuxtLink id="additional-label-already-auth">Already have an account?
+                        </NuxtLink>
+                </div>
+                <div id="auth-form-sign">
+                    <button @click="async () => { request_status = 'pending', await sign_in() }"
+                        :disabled="request_status === 'pending'" id="sign-in-button">
+                        <template v-if="request_status !== 'pending'">
+                            <img src="~/public/sign.png">
+                            <p>Sign In</p>
+                        </template>
+                        <img v-else src="~/public/loading.gif">
+                    </button>
+                </div>
+                <p v-if="request_status === 'error'">{{ translations.login_error[lang] }}</p>
+            </div>
+        </div>
+
+    </div>
+    <!-- <div id="content-container">
         <div id="form-container">
             <div id="title-container">
                 <p>Offer</p>
@@ -36,8 +101,8 @@ useHead({
                 </p>
             </div>
         </div>
-    </div>
-    <Footer />
+    </div> -->
+    <!-- <Footer /> -->
 </template>
 
 <style>
