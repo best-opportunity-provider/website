@@ -43,11 +43,16 @@ function DisplayMenuBar() {
                 <p>{{ item }}</p>
             </a>
         </div>
-        <a id="header-profile-container"  @click="DisplayMenuBar()">
+        <!-- TODO: IF USER AUTHORIZED-->
+        <!-- <a id="header-profile-container"  @click="DisplayMenuBar()">
             <p>teviroff</p>
             <div class="border">
                 <img src="~/public/anya.png">
             </div>
+        </a> -->
+        <!-- ELSE -->
+        <a id="header-profile-container">
+            <a id="header-profile-login" href="/sign-in">Войти</a>
         </a>
         <div :style="menuObject" id="header-drop-menu">
             <div class="header-drop-menu-item">
@@ -237,4 +242,24 @@ header {
     height: .1px;
     margin: 5px 16px;
 }
+#content-container {
+    background-color: #141414;
+    height: 100vh
+}
+
+#header-profile-login {
+    border: 1px solid #777777;
+    background-color: #101010;
+    border-radius: 10px;
+    padding: 10px 15px 10px 15px;
+    color: #777777;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#header-profile-login:hover {
+    color: white;
+}
+
 </style>
