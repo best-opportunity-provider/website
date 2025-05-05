@@ -1,0 +1,63 @@
+#content-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-title img {
+    width: 30px;
+    height: 30px;
+}
+
+.card-item {
+    margin-top: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid #555555;
+    padding: 15px;
+    border-radius: 10px;
+    width: 600px;
+}
+
+.card-item label {
+    font-size: 15px;
+}
+
+.card-description {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-description-short-description {
+    font-weight: 200;
+}
+
+.card-description-name {
+    font-weight: 500;   
+}
+
+.card-status {
+    display: flex;
+    gap: 10px;
+}
+
+.card-status-value-ok {
+    color: rgb(19, 105, 19);
+}
+
+.card-status-value-pending {
+    color: rgb(163, 163, 58);
+}
+
+.card-status-value-reject {
+    color: rgb(163, 58, 58);
+}
