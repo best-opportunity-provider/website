@@ -1,0 +1,16 @@
+.apply-field {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+}
+
+#apply-form {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    outline: unset;
+    padding: 3px;
+}
