@@ -39,15 +39,15 @@ const api_key = useCookie<string | undefined>(
     'api_key', { default: () => undefined }
 )
 
-// if (api_key.value === undefined) {
-//     throw createError({
-//         statusCode: 403,
-//         statusMessage: 'Authentication required',
-//         fatal: true,
-//     });
-// }
+if (api_key.value === undefined) {
+    throw createError({
+        statusCode: 403,
+        statusMessage: 'Authentication required',
+        fatal: true,
+    });
+}
 
-const {status: load_status } = await useLazyFetch<Opportunity>(
+const { data: opportunity, status: load_status } = await useLazyFetch<Opportunity>(
     `${props.lang}/opportunity`,
     {
         method: 'GET',
@@ -93,41 +93,17 @@ const translations = {
         ru: 'Ошибка загрузки мест',
     },
 }
-let opportunity = {
-    name: "gogo",
-    provider: {
-        name: "Yandex",
-        id: 10,
-        logo: "~/public/anya.png"
-
-    },
-    description: "lol",
-    category: 1,
-    id: 10,
-    tags: [
-        {
-            id: 10,
-            name: "lel",
-        }
-    ],
-    places: [
-        {
-            id: 10,
-            name: "lel",
-        }
-    ]
-}
 </script>
 
 <template>
     <div id="opportunity-head-container">
-        <!-- <div v-if="load_status === 'pending'" id="opportunity-head-pending-container">
+        <div v-if="load_status === 'pending'" id="opportunity-head-pending-container">
             <img src="~/public/loading.gif" class="loader">
         </div>
-        <div  id="opportunity-head-error-container">
+        <div v-else-if="!opportunity || load_status == 'error'" id="opportunity-head-error-container">
             <p>{{ translations.head_error[lang] }}</p>
-        </div> -->
-        <!-- <template> -->
+        </div>
+        <template v-else>
             <div id="opportunity-title-container">
                 <p>{{ opportunity.name }}</p>
                 <div>
@@ -146,7 +122,7 @@ let opportunity = {
             <a id="visit-opportunity-page-button" :href="`/form`">
                 {{ translations.apply_vacancy[lang] }}
             </a>
-        <!-- </template> -->
+        </template>
     </div>
     <div id="opportunity-side-container">
         <div id="opportunity-tags-container" class="container">
@@ -154,13 +130,13 @@ let opportunity = {
                 <img class="img" src="~/public/hash.png">
                 <p class="title">{{ translations.tags[lang] }}</p>
             </div>
-            <!-- <div v-if="load_status == 'pending'" class="pending-container">
+            <div v-if="load_status == 'pending'" class="pending-container">
                 <img src="~/public/loading.gif" class="loader">
             </div>
             <div v-else-if="!opportunity || load_status == 'error'" class="error-container">
                 <p>{{ translations.tags_error[lang] }}</p>
-            </div> -->
-            <div class="tags-container">
+            </div>
+            <div v-else class="tags-container">
                 <p v-if="opportunity.tags.length === 0" id="tags-empty">
                     {{ translations.no_tags[lang] }}
                 </p>
@@ -175,13 +151,13 @@ let opportunity = {
                 <img class="img" src="~/public/place.png">
                 <p class="title">{{ translations.places[lang] }}</p>
             </div>
-            <!-- <div v-if="load_status == 'pending'" class="pending-container">
+            <div v-if="load_status == 'pending'" class="pending-container">
                 <img src="~/public/loading.gif" class="loader">
             </div>
             <div v-else-if="!opportunity || load_status == 'error'" class="error-container">
                 <p>{{ translations.places_error[lang] }}</p>
-            </div> -->
-            <div class="places-container">
+            </div>
+            <div v-else class="places-container">
                 <p v-if="opportunity.places.length === 0" id="places-empty">
                     {{ translations.no_places[lang] }}
                 </p>
