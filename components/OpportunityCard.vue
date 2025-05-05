@@ -26,10 +26,6 @@ type Opportunity = {
     places: NamedObject[],
 };
 
-function capitalize(s: string): string {
-    return s[0].toUpperCase() + s.slice(1);
-}
-
 function categoryName(category: Category): string {
     switch (category) {
         case 0:
@@ -43,13 +39,13 @@ const api_key = useCookie<string | undefined>(
     'api_key', { default: () => undefined }
 )
 
-// if (!api_key.value) {
-//     throw createError({
-//         statusCode: 403,
-//         statusMessage: 'Authentication required',
-//         fatal: true,
-//     });
-// }
+if (api_key.value === undefined) {
+    throw createError({
+        statusCode: 403,
+        statusMessage: 'Authentication required',
+        fatal: true,
+    });
+}
 
 const { data: opportunity, status: load_status } = await useLazyFetch<Opportunity>(
     `${props.lang}/opportunity`,
