@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { navigateTo, onMounted, ref, useCookie, useHead } from '#imports';
-import Footer from '~/components/Footer.vue';
 
 const lang = useCookie<'en' | 'ru'>('lang', {
     default: () => 'en',
@@ -116,6 +115,18 @@ const translations = {
     error: {
         en: 'Some error occured',
         ru: 'Произошла ошибка',
+    },
+    username_error: {
+        en: 'Invalid username',
+        ru: 'Не валидное имя пользователя',
+    },
+    email_error: {
+        en: 'Invalid email',
+        ru: 'Не валидная электронная почта',
+    },
+    password_error: {
+        en: 'Invalid password (must have uppercase letter, lowercase letter, digit and special symbol)',
+        ru: 'Не валидный пароль (должна быть заглавная буква, строчная буква, цифра и спец. символ)',
     }
 };
 
@@ -125,7 +136,7 @@ useHead({
 </script>
 
 <template>
-     <div>
+    <div>
         <div id="title">
             <h1>Welcome Back</h1>
             <div id="title-logo-block">
@@ -154,9 +165,8 @@ useHead({
                         <label for="email">Email</label>
                         <div id="email-label-content">
                             <img src="~/public/mail.png">
-                            <input v-model="username_input" @input="handle_username_input"
-                                :disabled="request_status === 'pending'" type="text" name="email"
-                                placeholder="Email" />
+                            <input v-model="email_input" @input="handle_email_input"
+                                :disabled="request_status === 'pending'" type="text" name="email" placeholder="Email" />
                         </div>
                         <p v-if="username_input_status === 'error'">{{ translations.username_error[lang] }}</p>
                     </div>
@@ -172,11 +182,11 @@ useHead({
                     </div>
                 </div>
                 <div id="additional">
-                        <NuxtLink id="additional-label-already-auth">Already have an account?
-                        </NuxtLink>
+                    <NuxtLink id="additional-label-already-auth">Already have an account?
+                    </NuxtLink>
                 </div>
                 <div id="auth-form-sign">
-                    <button @click="async () => { request_status = 'pending', await sign_in() }"
+                    <button @click="async () => { request_status = 'pending', sign_up() }"
                         :disabled="request_status === 'pending'" id="sign-in-button">
                         <template v-if="request_status !== 'pending'">
                             <img src="~/public/sign.png">
@@ -185,7 +195,7 @@ useHead({
                         <img v-else src="~/public/loading.gif">
                     </button>
                 </div>
-                <p v-if="request_status === 'error'">{{ translations.login_error[lang] }}</p>
+                <p v-if="request_status === 'error'">{{ translations.error[lang] }}</p>
             </div>
         </div>
 

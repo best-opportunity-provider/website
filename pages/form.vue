@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { navigateTo, onMounted, ref, useCookie, useHead, useTemplateRef } from '#imports'
+import { computed, navigateTo, onMounted, ref, useCookie, useHead, useTemplateRef } from '#imports'
 import { FetchError } from 'ofetch'
 import Header from '~/components/Header.vue'
 import Footer from '~/components/Footer.vue'
@@ -61,6 +61,15 @@ const lastname = ref<string>('');
 const birthday = ref<Date>(new Date(Date.now()));
 const sex = ref<'male' | 'female'>('male');
 const phone_number = ref<string>('');
+const phone_number_status = computed(() => {
+    if (phone_number.value === '') {
+        return 'empty';
+    }
+    if (phone_number.value.match(/^(\+7|8)/)) {
+        return 'valid';
+    }
+    return 'invalid';
+});
 const cv = useTemplateRef('cv');
 
 const submit_status = ref<'pending' | 'error' | 'success' | 'idle'>('idle');
@@ -128,12 +137,15 @@ useHead({
             <div class="apply-field">
                 <label>{{ translations.phone_label[lang] }}: </label>
                 <input type="text" v-model="phone_number">
+                <p v-if="phone_number_status === 'invalid'">
+                    Invalid phone number
+                </p>
             </div>
             <div class="apply-field">
                 <label>{{ translations.cv_label[lang] }}: </label>
                 <input type="file" ref="cv" />
             </div>
-            <button @click="submit" :disabled="submit_status !== 'idle'">
+            <button @click="submit" :disabled="submit_status !== 'idle' || phone_number_status !== 'valid'">
                 <img v-if="submit_status === 'pending'" src="~/public/loading.gif" style="height: 2em;">
                 <p v-else>Submit</p>
             </button>
