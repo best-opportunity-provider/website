@@ -1,27 +1,69 @@
 <script setup lang="ts">
 
+import { createError, navigateTo, useCookie, useFetch } from '#app';
 import { ref, reactive } from 'vue'
 
 const props = defineProps<{
     lang: 'en' | 'ru',
-    active_nav_section: number | null
-}>()
+    api_host: string,
+    active_nav_section: number | null,
+    must_fill_info: boolean,
+}>();
+
+const api_key = useCookie<string | undefined>(
+    'api_key', { default: () => undefined, maxAge: 3600 * 24 * 2 }
+)
+
+type User = {
+    username: string,
+    avatar: string,
+    filled_info: boolean,
+};
+
+const user = ref<User | null>(null);
+
+if (api_key.value !== undefined) {
+    const { data: user_data, error } = await useFetch<User>(
+        `${props.lang}/user`,
+        {
+            method: 'GET',
+            baseURL: `http://${props.api_host}`,
+            query: {
+                api_key: api_key.value,
+            },
+        }
+    );
+    if (error.value !== null) {
+        if (error.value.statusCode === 403) {
+            api_key.value = undefined
+            await navigateTo('/sign-in');
+        }
+        throw createError({
+            statusCode: error.value.statusCode,
+            statusMessage: 'Something went wrong',
+            fatal: true,
+        });
+    }
+    user.value = user_data.value;
+}
+
+if (props.must_fill_info && !user.value?.filled_info) {
+    await navigateTo('/form');
+}
 
 const nav_items = {
     'en': [
         ['Opportunities', '/opportunities'],
-        ['Responses', '/responses'],
-        ['Profile', '/me'],
+        ['Profile', '/form'],
     ],
     'ru': [
         ['Возможности', '/opportunities'],
-        ['Отклики', '/responses'],
-        ['Профиль', '/me'],
+        ['Профиль', '/form'],
     ],
 }
 
 const menuObject = reactive({
-  display: 'none',
+    display: 'none',
 })
 
 
@@ -29,6 +71,12 @@ function DisplayMenuBar() {
     menuObject.display = menuObject.display == 'inline' ? 'none' : 'inline'
 }
 
+const translations = {
+    sign_in: {
+        en: 'Sign in',
+        ru: 'Войти',
+    },
+};
 </script>
 
 <template>
@@ -44,29 +92,31 @@ function DisplayMenuBar() {
             </a>
         </div>
         <!-- TODO: IF USER AUTHORIZED-->
-        <!-- <a id="header-profile-container"  @click="DisplayMenuBar()">
-            <p>teviroff</p>
+        <a v-if="user !== null" id="header-profile-container" @click="DisplayMenuBar()">
+            <p>{{ user.username }}</p>
             <div class="border">
-                <img src="~/public/anya.png">
+                <img :src="`http://${props.api_host}/${props.lang}/file?id=${user.avatar}&api_key=${api_key}`">
             </div>
-        </a> -->
+        </a>
         <!-- ELSE -->
-        <a id="header-profile-container">
-            <a id="header-profile-login" href="/sign-in">Войти</a>
+        <a v-else id="header-profile-container">
+            <a id="header-profile-login" href="/sign-in">{{ translations.sign_in[lang] }}</a>
         </a>
         <div :style="menuObject" id="header-drop-menu">
-            <div class="header-drop-menu-item">
-                <img src="~/public/settings.png">Управление аккаунтом</div>
+            <!-- <div class="header-drop-menu-item">
+                <img src="~/public/settings.png">Управление аккаунтом
+            </div>
             <div class="Divider"></div>
 
             <div class="header-drop-menu-item">
-                <img src="~/public/settings.png">Управление аккаунтом</div>
+                <img src="~/public/settings.png">Управление аккаунтом
+            </div>
             <div class="Divider"></div>
 
             <div class="header-drop-menu-item">
-                <img src="~/public/settings.png">Управление аккаунтом</div>
-            <div class="Divider"></div>
-
+                <img src="~/public/settings.png">Управление аккаунтом
+            </div>
+            <div class="Divider"></div> -->
             <div id="logout-block">
                 <div id="logout-button">Выйти</div>
             </div>
@@ -131,7 +181,8 @@ header {
     transition: color .3s;
 }
 
-.header-nav-item:hover, .header-nav-item.selected {
+.header-nav-item:hover,
+.header-nav-item.selected {
     color: white;
     transition: color .3s;
 }
@@ -209,11 +260,11 @@ header {
     cursor: pointer;
 }
 
-.header-drop-menu-item img{
+.header-drop-menu-item img {
     height: 15px;
 }
 
-.header-drop-menu-item:hover{
+.header-drop-menu-item:hover {
     background-color: #555555;
 }
 
@@ -242,6 +293,7 @@ header {
     height: .1px;
     margin: 5px 16px;
 }
+
 #content-container {
     background-color: #141414;
     height: 100vh
@@ -261,5 +313,4 @@ header {
 #header-profile-login:hover {
     color: white;
 }
-
 </style>

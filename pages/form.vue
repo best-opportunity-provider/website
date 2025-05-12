@@ -1,9 +1,11 @@
-<script setup>
-import { useHead } from '#imports'
+<script setup lang="ts">
+import { navigateTo, onMounted, ref, useCookie, useHead, useTemplateRef } from '#imports'
+import { FetchError } from 'ofetch'
 import Header from '~/components/Header.vue'
 import Footer from '~/components/Footer.vue'
 
-const lang = 'ru'
+const lang = 'ru';
+const api_host = 'localhost:8001';
 
 const translations = {
     page_title: {
@@ -35,12 +37,63 @@ const translations = {
         ru: "Телефон",
     },
     cv_label: {
-        en: "Cv",
+        en: "CV",
         ru: "Резюме",
     },
     cv_select_button: {
         en: "Browse",
         ru: "Выбрать",
+    }
+}
+
+const api_key = useCookie<string | undefined>(
+    'api_key', { default: () => undefined }
+);
+
+onMounted(async () => {
+    if (api_key.value === undefined) {
+        await navigateTo('/sign-in');
+    }
+});
+
+const firstname = ref<string>('');
+const lastname = ref<string>('');
+const birthday = ref<Date>(new Date(Date.now()));
+const sex = ref<'male' | 'female'>('male');
+const phone_number = ref<string>('');
+const cv = useTemplateRef('cv');
+
+const submit_status = ref<'pending' | 'error' | 'success' | 'idle'>('idle');
+
+async function submit() {
+    submit_status.value = 'pending';
+    let data = new FormData();
+    data.append('name', firstname.value);
+    data.append('surname', lastname.value);
+    data.append('birthday', birthday.value.toString());
+    data.append('gender', sex.value);
+    data.append('phone_number', phone_number.value);
+    data.append('cv', cv.value.files[0]);
+    let result = await $fetch<{}>(
+        `${lang}/user/info`,
+        {
+            method: 'POST',
+            baseURL: `http://${api_host}`,
+            body: data,
+            query: {
+                api_key: api_key.value,
+            },
+        }
+    ).catch(async (error: FetchError) => {
+        if (error.statusCode === 403) {
+            api_key.value = undefined;
+            await navigateTo('/sign-in');
+        }
+        submit_status.value = 'error';
+        return null;
+    });
+    if (result !== null) {
+        submit_status.value = 'success';
     }
 }
 
@@ -50,48 +103,45 @@ useHead({
 </script>
 
 <template>
-    <Header :lang="lang" :active_nav_section="null" />
+    <Header :lang="lang" :api_host="'localhost:8001'" :active_nav_section="1" :must_fill_info="false" />
     <div id="content-container">
         <div id="apply-form">
             <div class="apply-field string-field">
                 <label for="">{{ translations.firstname_label[lang] }}: </label>
-                <input type="text">
+                <input type="text" v-model="firstname">
             </div>
             <div class="apply-field string-field">
                 <label>{{ translations.lastname_label[lang] }}: </label>
-                <input type="text">
-
+                <input type="text" v-model="lastname">
             </div>
             <div class="apply-field string-field">
                 <label>{{ translations.birthday_label[lang] }}: </label>
-                <input type="date">
+                <input type="date" v-model="birthday">
             </div>
             <div class="apply-field dropmenu-field">
                 <label>{{ translations.sex_label[lang] }}: </label>
-                <select>
-                    <option>- not selected -</option>
-                    <option>Man</option>
-                    <option>Woman</option>
+                <select v-model="sex">
+                    <option value="male">Man</option>
+                    <option value="female">Woman</option>
                 </select>
             </div>
             <div class="apply-field">
-                <label>{{ translations.email_label[lang] }}: </label>
-                <input type="text">
-
-            </div>
-            <div class="apply-field">
                 <label>{{ translations.phone_label[lang] }}: </label>
-                <input type="text">
+                <input type="text" v-model="phone_number">
             </div>
             <div class="apply-field">
                 <label>{{ translations.cv_label[lang] }}: </label>
-                <input type="file" id="selectedFile" style="display: none;" />
-                <input type="button" :value="translations.cv_select_button[lang]" onclick="document.getElementById('selectedFile').click();" />
+                <input type="file" ref="cv" />
             </div>
+            <button @click="submit" :disabled="submit_status !== 'idle'">
+                <img v-if="submit_status === 'pending'" src="~/public/loading.gif" style="height: 2em;">
+                <p v-else>Submit</p>
+            </button>
+            <p v-if="submit_status === 'error'">Some error occured</p>
+            <p v-else-if="submit_status === 'success'">Successfully updated info</p>
         </div>
-
     </div>
-    <Footer :lang="lang"/>
+    <Footer :lang="lang" />
 </template>
 
 <style>

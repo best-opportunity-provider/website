@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { createError, useCookie, useLazyFetch } from '#app';
+import { createError, navigateTo, useCookie, useFetch, useLazyFetch, type AsyncDataRequestStatus } from '#app';
+import { onMounted, onUpdated, ref, watch, type Ref } from 'vue';
+import { FetchError } from 'ofetch';
 
 const props = defineProps<{
     lang: 'en' | 'ru',
@@ -39,25 +41,92 @@ const api_key = useCookie<string | undefined>(
     'api_key', { default: () => undefined }
 )
 
-if (api_key.value === undefined) {
-    throw createError({
-        statusCode: 403,
-        statusMessage: 'Authentication required',
-        fatal: true,
+let opportunity = ref<Opportunity | null>(null);
+let load_status = ref<AsyncDataRequestStatus>('idle');
+let load_error = ref<FetchError | null>(null);
+const for_paid = ref(false);
+
+async function fetch_opportunity() {
+    load_status.value = 'pending';
+    opportunity.value = await $fetch<Opportunity>(
+        `${props.lang}/opportunity`,
+        {
+            method: 'GET',
+            baseURL: `http://${props.api_host}`,
+            query: {
+                opportunity_id: props.opportunity_id,
+                api_key: api_key.value,
+            },
+        }
+    ).catch((error: FetchError) => {
+        load_status.value = 'error';
+        load_error.value = error;
+        return null;
     });
+    if (opportunity.value !== null) {
+        load_status.value = 'success';
+    }
 }
 
-const { data: opportunity, status: load_status } = await useLazyFetch<Opportunity>(
-    `${props.lang}/opportunity`,
-    {
-        method: 'GET',
-        baseURL: `http://${props.api_host}`,
-        query: {
-            opportunity_id: props.opportunity_id,
-            api_key: api_key.value,
-        },
+onMounted(async () => {
+    if (api_key.value === undefined) {
+        await navigateTo('/sign-in');
     }
-);
+    fetch_opportunity();
+});
+
+watch(() => props.opportunity_id, () => {
+    fetch_opportunity();
+    submit_status.value = 'waiting';
+});
+
+watch(load_error, async () => {
+    if (load_error.value === null) {
+        return;
+    }
+    if (load_error.value.statusCode === 403) {
+        api_key.value = undefined
+        await navigateTo('/sign-in');
+    }
+    console.log(load_error.value.data);
+    // only for paid users
+    if (load_error.value.statusCode === 422 && load_error.value.data.query.opportunity_id[0].type === 204) {
+        for_paid.value = true;
+        return;
+    }
+    throw createError({
+        statusCode: load_error.value.statusCode,
+        statusMessage: 'Something went wrong',
+        fatal: true,
+    });
+});
+
+const submit_status = ref<'error' | 'success' | 'pending' | 'waiting'>('waiting');
+
+async function submit() {
+    submit_status.value = 'pending';
+    let { error } = await useFetch(
+        `${props.lang}/opportunity/response`,
+        {
+            method: 'POST',
+            baseURL: `http://${props.api_host}`,
+            query: {
+                api_key: api_key,
+                opportunity_id: props.opportunity_id,
+            },
+            cache: 'no-cache',
+        }
+    );
+    if (error.value === null) {
+        submit_status.value = 'success';
+        return;
+    }
+    if (error.value.statusCode === 403) {
+        api_key.value = undefined;
+        await navigateTo('/sign-in');
+    }
+    submit_status.value = 'error';
+}
 
 const translations = {
     apply_vacancy: {
@@ -84,6 +153,10 @@ const translations = {
         en: 'Couldn\'t load opportunity',
         ru: 'Ошибка загрузки возможности',
     },
+    head_paid_error: {
+        en: 'This opportunity is available only for subscribers',
+        ru: 'Эта возможность доступна только с оформленной подпиской',
+    },
     tags_error: {
         en: 'Couldn\'t load tags',
         ru: 'Ошибка загрузки тегов',
@@ -92,16 +165,25 @@ const translations = {
         en: 'Couldn\'t load places',
         ru: 'Ошибка загрузки мест',
     },
+    apply_error: {
+        en: 'Error happened',
+        ru: 'Произошла ошибка',
+    },
+    apply_success: {
+        en: 'You successfully applied!',
+        ru: 'Вы успешно подались на вакансию!',
+    },
 }
 </script>
 
 <template>
-    <div id="opportunity-head-container">
+    <div id="opportunity-head-container" @opportunity-update="fetch_opportunity()">
         <div v-if="load_status === 'pending'" id="opportunity-head-pending-container">
             <img src="~/public/loading.gif" class="loader">
         </div>
         <div v-else-if="!opportunity || load_status == 'error'" id="opportunity-head-error-container">
-            <p>{{ translations.head_error[lang] }}</p>
+            <p v-if="!for_paid">{{ translations.head_error[lang] }}</p>
+            <p v-else>{{ translations.head_paid_error[lang] }}</p>
         </div>
         <template v-else>
             <div id="opportunity-title-container">
@@ -119,9 +201,18 @@ const translations = {
                 </div>
             </div>
             <p>{{ opportunity.description }}</p>
-            <a id="visit-opportunity-page-button" :href="`/form`">
-                {{ translations.apply_vacancy[lang] }}
-            </a>
+            <button id="visit-opportunity-page-button" @click="submit" :disabled="submit_status !== 'waiting'">
+                <p v-if="submit_status === 'waiting'">
+                    {{ translations.apply_vacancy[lang] }}
+                </p>
+                <p v-else-if="submit_status === 'error'">
+                    {{ translations.apply_error[lang] }}
+                </p>
+                <p v-else-if="submit_status === 'success'">
+                    {{ translations.apply_success[lang] }}
+                </p>
+                <img v-else style="height: 2em;" src="~/public/loading.gif" />
+            </button>
         </template>
     </div>
     <div id="opportunity-side-container">
@@ -140,7 +231,7 @@ const translations = {
                 <p v-if="opportunity.tags.length === 0" id="tags-empty">
                     {{ translations.no_tags[lang] }}
                 </p>
-                <a v-for="{ id, name } in opportunity.tags.slice(0, 3)" class="tag" :href="`/opportunities?tag=${id}`">
+                <a v-for="{ id, name } in opportunity.tags.slice(0, 3)" class="tag">
                     <p>{{ name }}</p>
                 </a>
                 <p v-if="opportunity.tags.length > 3" id="opportunity-tag-wildcard" class="tag">...</p>
@@ -161,13 +252,13 @@ const translations = {
                 <p v-if="opportunity.places.length === 0" id="places-empty">
                     {{ translations.no_places[lang] }}
                 </p>
-                <a v-for="{ id, name } in opportunity.places.slice(0, 3)" class="tag"
-                    :href="`/opportunities?place=${id}`">
+                <a v-for="{ id, name } in opportunity.places.slice(0, 3)" class="tag">
                     <p>{{ name }}</p>
                 </a>
                 <p v-if="opportunity.places.length > 3" id="opportunity-place-wildcard" class="tag">...</p>
             </div>
         </div>
+        <slot></slot>
     </div>
 </template>
 
@@ -277,8 +368,14 @@ const translations = {
 }
 
 #opportunity-head-container>p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 5;
+    -webkit-line-clamp: 5;
     color: white;
     font-weight: 250;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #visit-opportunity-page-button {

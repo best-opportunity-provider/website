@@ -18,11 +18,11 @@ useHead({
 </script>
 
 <template>
-    <Header :lang="lang" :active_nav_section="null" />
+    <Header :lang="lang" :api_host="'localhost:8001'" :active_nav_section="null" :must_fill_info="false" />
     <div id="content-container">
         <p>Lorem Ipsum</p>
     </div>
-    <Footer :lang="lang"/>
+    <Footer :lang="lang" />
 </template>
 
 <style>

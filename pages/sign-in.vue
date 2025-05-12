@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { useHead, ref, useCookie, navigateTo, useFetch } from '#imports'
-import type { RefSymbol } from '@vue/reactivity';
-import Footer from '~/components/Footer.vue'
 
 const lang = useCookie<'en' | 'ru'>('lang', {
     default: () => 'en',
