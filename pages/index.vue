@@ -3,7 +3,8 @@ import { useHead } from '#imports'
 import Header from '~/components/Header.vue'
 import Footer from '~/components/Footer.vue'
 
-const lang = 'ru'
+const lang = 'ru';
+const api_host = '91.218.8.186:8003';
 
 const translations = {
     page_title: {
@@ -18,7 +19,7 @@ useHead({
 </script>
 
 <template>
-    <Header :lang="lang" :api_host="'localhost:8001'" :active_nav_section="null" :must_fill_info="false" />
+    <Header :lang="lang" :api_host="api_host" :active_nav_section="null" :must_fill_info="false" />
     <div id="content-container">
         <p>Lorem Ipsum</p>
     </div>

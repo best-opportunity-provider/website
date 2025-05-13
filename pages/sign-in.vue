@@ -9,7 +9,7 @@ if (lang.value !== 'en' && lang.value !== 'ru') {
     lang.value = 'en';
 }
 
-const api_host = 'localhost:8001';
+const api_host = '91.218.8.186:8003';
 
 const api_key = useCookie<string | undefined>(
     'api_key', { default: () => undefined }

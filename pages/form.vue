@@ -5,7 +5,8 @@ import Header from '~/components/Header.vue'
 import Footer from '~/components/Footer.vue'
 
 const lang = 'ru';
-const api_host = 'localhost:8001';
+
+const api_host = '91.218.8.186:8003';
 
 const translations = {
     page_title: {
@@ -103,6 +104,7 @@ async function submit() {
     });
     if (result !== null) {
         submit_status.value = 'success';
+        await navigateTo('/opportunities');
     }
 }
 
@@ -112,7 +114,7 @@ useHead({
 </script>
 
 <template>
-    <Header :lang="lang" :api_host="'localhost:8001'" :active_nav_section="1" :must_fill_info="false" />
+    <Header :lang="lang" :api_host="api_host" :active_nav_section="1" :must_fill_info="false" />
     <div id="content-container">
         <div id="apply-form">
             <div class="apply-field string-field">
@@ -138,7 +140,7 @@ useHead({
                 <label>{{ translations.phone_label[lang] }}: </label>
                 <input type="text" v-model="phone_number">
                 <p v-if="phone_number_status === 'invalid'">
-                    Invalid phone number
+                    Номер телефона должен начинаться с '8' или '+7'
                 </p>
             </div>
             <div class="apply-field">

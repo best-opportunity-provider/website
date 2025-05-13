@@ -5,7 +5,8 @@ import Header from '~/components/Header.vue';
 import Footer from '~/components/Footer.vue';
 import OpportunityCard from '~/components/OpportunityCard.vue';
 
-const api_host = 'localhost:8001';
+const api_host = '91.218.8.186:8003';
+
 const lang = useCookie<'en' | 'ru'>('lang', {
     default: () => 'en',
     maxAge: 3600 * 24 * 3650,
@@ -198,7 +199,7 @@ useHead({
 </script>
 
 <template>
-    <Header :lang="lang" :api_host="'localhost:8001'" :active_nav_section="0" :must_fill_info="true" />
+    <Header :lang="lang" :api_host="api_host" :active_nav_section="0" :must_fill_info="true" />
     <div id="content-container">
         <ClientOnly>
             <img v-if="opportunities_request_status === 'pending'" src="~/public/loading.gif">

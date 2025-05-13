@@ -189,13 +189,15 @@ const translations = {
             <div id="opportunity-title-container">
                 <p>{{ opportunity.name }}</p>
                 <div>
-                    <a id="provider-container" :href="`/opportunities?provider=${opportunity.provider.id}`">
+                    <!-- <a id="provider-container" :href="`/opportunities?provider=${opportunity.provider.id}`"> -->
+                    <a id="provider-container">
                         <img
                             :src="`http://${props.api_host}/${props.lang}/file?id=${opportunity.provider.logo}&api_key=${api_key}`">
                         <p>{{ opportunity.provider.name }}</p>
                     </a>
                     <p>/</p>
-                    <a id="opportunity-category" :href="`/opportunities?category=${opportunity.category}`">
+                    <!-- <a id="opportunity-category" :href="`/opportunities?category=${opportunity.category}`"> -->
+                    <a id="opportunity-category">
                         {{ categoryName(opportunity.category) }}
                     </a>
                 </div>

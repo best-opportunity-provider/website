@@ -9,7 +9,7 @@ const api_key = useCookie<string | undefined>(
     'api_key', { default: () => undefined }
 )
 
-const api_host = 'localhost:8001';
+const api_host = '91.218.8.186:8003';
 
 const username_input = ref<string>('');
 const username_input_status = ref<'error' | 'valid' | 'empty'>('empty');
@@ -43,8 +43,8 @@ const password_input_status = ref<'error' | 'valid' | 'empty'>('empty');
 async function handle_password_input() {
     if (password_input.value === '') {
         password_input_status.value = 'empty';
-    } else if (!password_input.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.\-@$!%*?&])[A-Za-z\d.\-@$!%*?&]*$/)) {
-        password_input_status.value = 'error';
+    // } else if (!password_input.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.\-@$!%*?&])[A-Za-z\d.\-@$!%*?&]*$/)) {
+    //     password_input_status.value = 'error';
     } else {
         password_input_status.value = 'valid';
     }
@@ -125,8 +125,8 @@ const translations = {
         ru: 'Не валидная электронная почта',
     },
     password_error: {
-        en: 'Invalid password (must have uppercase letter, lowercase letter, digit and special symbol)',
-        ru: 'Не валидный пароль (должна быть заглавная буква, строчная буква, цифра и спец. символ)',
+        en: 'Invalid password',
+        ru: 'Не валидный пароль',
     }
 };
 
