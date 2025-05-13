@@ -72,7 +72,7 @@ async function sign_in() {
         maxAge: remember_input.value ? 3600 * 24 * 365 : 3600 * 2
     });
     api_key.value = response.value.api_key;
-    await navigateTo('/');
+    await navigateTo('/opportunities');
 }
 
 const translations = {
